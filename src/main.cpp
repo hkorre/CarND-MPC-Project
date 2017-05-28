@@ -98,8 +98,26 @@ int main() {
           * Both are in between [-1, 1].
           *
           */
-          double steer_value;
-          double throttle_value;
+
+          // fit road to 3rd order polynomial...
+          Eigen::VectorXd x_road = Eigen::VectorXd::Map(ptsx.data(), ptsx.size());
+          Eigen::VectorXd y_road = Eigen::VectorXd::Map(ptsy.data(), ptsy.size());
+          auto coeffs = polyfit(x_road, y_road, 3);
+
+          // calculate current state...
+          double cte = polyeval(coeffs, px) - py;
+            // cross track error calculated by evaluating at poly at x, f(x)
+            // and subtracting y.
+          double epsi = -atan(coeffs[1]);
+            // Due to sign starting at 0, orientation error is -f'(x).
+            // derivative of coeffs[0] + coeffs[1] * x -> coeffs[1]
+          Eigen::VectorXd state(6);
+          state << px, py, psi, v, cte, epsi;
+
+          // solve the Model Predictive Control...
+          auto vars = mpc.Solve(state, coeffs);
+          double steer_value = vars[6];
+          double throttle_value = vars[7];
 
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
