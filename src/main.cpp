@@ -77,9 +77,7 @@ int main() {
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
     string sdata = string(data).substr(0, length);
-/*
     cout << sdata << endl;
-*/
     if (sdata.size() > 2 && sdata[0] == '4' && sdata[1] == '2') {
       string s = hasData(sdata);
       if (s != "") {
@@ -113,23 +111,14 @@ int main() {
             ptsx_car[i] =  x_rWRTc*cos(psi) + y_rWRTc*sin(psi);
             ptsy_car[i] = -x_rWRTc*sin(psi) + y_rWRTc*cos(psi);
           }
-/*
-          std::cout << "psi = " << psi << std::endl;
-          std::cout << "x_road = " << ptsx_car << std::endl;
-          std::cout << "y_road = " << ptsy_car << std::endl;
-*/
 
 
           // fit road to 3rd order polynomial...
           Eigen::VectorXd x_road = Eigen::VectorXd::Map(ptsx_car.data(), ptsx_car.size());
           Eigen::VectorXd y_road = Eigen::VectorXd::Map(ptsy_car.data(), ptsy_car.size());
           auto coeffs = polyfit(x_road, y_road, 3);
-/*
-          std::cout << "coeffs: " << coeffs << std::endl;
-*/
 
           // calculate current state...
-          //double cte = polyeval(coeffs, px) - py;
           double cte = coeffs[0];
             // = polyeval(coeffs, px) - py;
             // In vehicle coordinates, car is at (0,0) -> polyeval(coeffs, 0) - 0
@@ -141,12 +130,9 @@ int main() {
             // -atan(f'(0)) = -atan(coeffs[1])
           Eigen::VectorXd state(6);
           state << v*0.1, 0, 0, v, cte, epsi;
-          //state << v*0.1, 0, 0, v, cte, epsi;
-          //state << 0, 0, 0, v, cte, epsi;
             // In vehicle frame (px,py,psi) = (0,0,0)
             // But there's a 100 ms delay, therefore we assume the car has travelled
             // (velocity)*(0.1 sec) forward (x-direction) since this measurement was taken 
-          std::cout << "state: " << state << std::endl;
 
           // solve the Model Predictive Control...
           auto vars = mpc.Solve(state, coeffs);
@@ -183,9 +169,7 @@ int main() {
 
 
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-/*
           std::cout << msg << std::endl;
-*/
           // Latency
           // The purpose is to mimic real driving conditions where
           // the car does actuate the commands instantly.
