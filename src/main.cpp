@@ -77,7 +77,9 @@ int main() {
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
     string sdata = string(data).substr(0, length);
+/*
     cout << sdata << endl;
+*/
     if (sdata.size() > 2 && sdata[0] == '4' && sdata[1] == '2') {
       string s = hasData(sdata);
       if (s != "") {
@@ -138,7 +140,8 @@ int main() {
             // In vehicle coordinates, car is at (0,0) -> -atan(f'(0))
             // -atan(f'(0)) = -atan(coeffs[1])
           Eigen::VectorXd state(6);
-          state << v*0.1, 0, 0, v, cte, epsi;
+          //state << v*0.1, 0, 0, v, cte, epsi;
+          state << 0, 0, 0, v, cte, epsi;
             // In vehicle frame (px,py,psi) = (0,0,0)
             // But there's a 100 ms delay, therefore we assume the car has travelled
             // (velocity)*(0.1 sec) forward (x-direction) since this measurement was taken 
@@ -191,7 +194,7 @@ int main() {
           //
           // NOTE: REMEMBER TO SET THIS TO 100 MILLISECONDS BEFORE
           // SUBMITTING.
-          this_thread::sleep_for(chrono::milliseconds(100));
+          //this_thread::sleep_for(chrono::milliseconds(100));
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }
       } else {

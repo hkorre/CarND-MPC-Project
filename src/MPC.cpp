@@ -5,6 +5,35 @@
 
 using CppAD::AD;
 
+// constraint coefficients
+#define  K_CTE       (1)
+#define  K_EPSI      (200)
+#define  K_V         (1)
+#define  K_DEL       (1)
+#define  K_A         (1)
+#define  K_DEL_DIFF  (500)
+#define  K_A_DIFF    (1)
+
+
+
+// Evaluate a polynomial.
+AD<double> polyeval(Eigen::VectorXd coeffs, AD<double> x) {
+  AD<double> result = 0.0;
+  for (int i = 0; i < coeffs.size(); i++) {
+    result += coeffs[i] * pow(x, i);
+  }
+  return result;
+}
+
+// Evaluate derivative of polynomial.
+AD<double> polyderiv(Eigen::VectorXd coeffs, AD<double> x) {
+  AD<double> result = 0.0;
+  for (int i = 1; i < coeffs.size(); i++) {
+    result += i * coeffs[i] * pow(x, i-1);
+  }
+  return result;
+}
+
 // TODO: Set the timestep length and duration
 size_t N = 25;
 double dt = 0.05;
@@ -62,21 +91,21 @@ class FG_eval {
 
     // The part of the cost based on the reference state.
     for (int i = 0; i < N; i++) {
-      fg[0] += CppAD::pow(vars[cte_start + i] - ref_cte, 2);
-      fg[0] += CppAD::pow(vars[epsi_start + i] - ref_epsi, 2);
-      fg[0] += CppAD::pow(vars[v_start + i] - ref_v, 2);
+      fg[0] += K_CTE  * CppAD::pow(vars[cte_start + i] - ref_cte, 2);
+      fg[0] += K_EPSI * CppAD::pow(vars[epsi_start + i] - ref_epsi, 2);
+      fg[0] += K_V    * CppAD::pow(vars[v_start + i] - ref_v, 2);
     }
 
     // Minimize the use of actuators.
     for (int i = 0; i < N - 1; i++) {
-      fg[0] += CppAD::pow(vars[delta_start + i], 2);
-      fg[0] += CppAD::pow(vars[a_start + i], 2);
+      fg[0] += K_DEL * CppAD::pow(vars[delta_start + i], 2);
+      fg[0] += K_A   * CppAD::pow(vars[a_start + i], 2);
     }
 
     // Minimize the value gap between sequential actuations.
     for (int i = 0; i < N - 2; i++) {
-      fg[0] += CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
-      fg[0] += CppAD::pow(vars[a_start + i + 1] - vars[a_start + i], 2);
+      fg[0] += K_DEL_DIFF * CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
+      fg[0] += K_A_DIFF   * CppAD::pow(vars[a_start + i + 1] - vars[a_start + i], 2);
     }
 
     //
@@ -118,8 +147,12 @@ class FG_eval {
       AD<double> delta0 = vars[delta_start + i];
       AD<double> a0 = vars[a_start + i];
 
+/*
       AD<double> f0 = coeffs[0] + coeffs[1] * x0;
       AD<double> psides0 = CppAD::atan(coeffs[1]);
+*/
+      AD<double> f0 = polyeval(coeffs, x0);         //desired position
+      AD<double> psides0 = CppAD::atan(polyderiv(coeffs, x0));  //desired orientation
 
       // Here's `x` to get you started.
       // The idea here is to constraint this value to be 0.
