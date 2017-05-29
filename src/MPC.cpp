@@ -35,7 +35,7 @@ AD<double> polyderiv(Eigen::VectorXd coeffs, AD<double> x) {
 }
 
 // TODO: Set the timestep length and duration
-size_t N = 25;
+size_t N = 10;   // smaller length worked better with latency
 double dt = 0.05;
 
 // This value assumes the model presented in the classroom is used.
