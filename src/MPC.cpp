@@ -147,11 +147,7 @@ class FG_eval {
       AD<double> delta0 = vars[delta_start + i];
       AD<double> a0 = vars[a_start + i];
 
-/*
-      AD<double> f0 = coeffs[0] + coeffs[1] * x0;
-      AD<double> psides0 = CppAD::atan(coeffs[1]);
-*/
-      AD<double> f0 = polyeval(coeffs, x0);         //desired position
+      AD<double> f0 = polyeval(coeffs, x0);                     //desired position
       AD<double> psides0 = CppAD::atan(polyderiv(coeffs, x0));  //desired orientation
 
       // Here's `x` to get you started.
