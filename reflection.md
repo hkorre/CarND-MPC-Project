@@ -5,8 +5,16 @@ Much of my initial code was based on mpc_to_line/solution/MPC.cpp from https://g
 I'll refer to this as "the MPC-Quiz".
 
 ## Model
-Student describes their model in detail. This includes the state, actuators and update equations.
-Xx
+The model was the same as the one descibed in the lessons.
+
+State:
+* Included vehicle position (x & y), vehicle angle (psi), vehicle velocity (v), cross track error (cte) and the angle error (epsi)
+
+Actuators:
+* Includes steering angle and acclerator/throttle value.
+
+Update Equations:
+* These are the same from Lesson 18 (kinematic model and error equations).
 
 
 ## Timestep Length and Elapsed Duration (N & dt)
