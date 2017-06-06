@@ -24,6 +24,7 @@ First Variables
 
 Second Variable
 * I later shortened N to 10, in order to deal with latency. This is explained more in the section on "Model Predictive Control with Latency".
+* I also extended dt to 0.1, so that the controller could look ahead farther with the same amount of computation.
 
 ## Polynomial Fitting and MPC Preprocessing
 

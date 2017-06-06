@@ -65,6 +65,11 @@ Eigen::VectorXd polyfit(Eigen::VectorXd xvals, Eigen::VectorXd yvals,
   return result;
 }
 
+double mph_to_mps(double mph_) {
+  return mph_*0.44704;  //1 mph = 0.44704 m/s
+}
+
+
 int main() {
   uWS::Hub h;
 
@@ -98,6 +103,10 @@ int main() {
           * Both are in between [-1, 1].
           *
           */
+
+          // Velocity, as reported by the simulator, is in mph,
+          // while the waypoints are reported in meters.
+          v = mph_to_mps(v);
 
           // convert from map coord system to car coordinate system...
           vector<double> ptsx_car(ptsx.size());
