@@ -8,8 +8,8 @@ using CppAD::AD;
 // constraint coefficients
 #define  K_CTE       (1)
 #define  K_EPSI      (200)
-#define  K_V         (1)
-#define  K_DEL       (1)
+#define  K_V         (200) //(1)
+#define  K_DEL       (200) //(100)
 #define  K_A         (1)
 #define  K_DEL_DIFF  (500)
 #define  K_A_DIFF    (1)
@@ -36,7 +36,7 @@ AD<double> polyderiv(Eigen::VectorXd coeffs, AD<double> x) {
 
 // TODO: Set the timestep length and duration
 size_t N = 10;   // smaller length worked better with latency
-double dt = 0.05;
+double dt = 0.1;
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -55,7 +55,7 @@ const double Lf = 2.67;
 // The reference velocity is set to 40 mph.
 double ref_cte = 0;
 double ref_epsi = 0;
-double ref_v = 40;
+double ref_v = 20.1168; //45 mph in m/s
 
 // The solver takes all the state variables and actuator
 // variables in a singular vector. Thus, we should to establish
